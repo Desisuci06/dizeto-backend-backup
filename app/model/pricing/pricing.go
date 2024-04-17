@@ -16,7 +16,7 @@ type Pricing struct {
 	Price     uint                        `gorm:"not null" json:"price" validate:"required"`
 	Paket     string                      `gorm:"not null" json:"paket" validate:"required"`
 	Category  string                      `gorm:"not null" json:"category"`
-	ItemList  []*model_item_list.ItemList `gorm:"foreignkey:PricingID" json:"item_list"`
+	ItemList  []*model_item_list.ItemList `gorm:"foreignKey:PricingID" json:"item_list"`
 	PageID    uint                        `json:"page_id"`
 	CreatedAt time.Time                   `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt time.Time                   `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`

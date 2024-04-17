@@ -47,7 +47,6 @@ func (pc *PricingController) CreatePricing(c *gin.Context) {
 		return
 	}
 	utils.SuccessMessage(c, http.StatusOK, "Successfully")
-
 }
 
 func (pc *PricingController) GetAllPricing(c *gin.Context) {

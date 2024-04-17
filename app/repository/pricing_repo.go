@@ -41,13 +41,13 @@ func (pr *pricingRepository) CreatePricing(pricing *model.Pricing, itemList []*m
 		return err
 	}
 
-	// Menyimpan setiap objek ItemList secara terpisah
-	for _, item := range itemList {
-		if err := tx.Create(item).Error; err != nil {
-			tx.Rollback()
-			return err
-		}
-	}
+	// // Menyimpan setiap objek ItemList secara terpisah
+	// for _, item := range itemList {
+	// 	if err := tx.Create(item).Error; err != nil {
+	// 		tx.Rollback()
+	// 		return err
+	// 	}
+	// }
 
 	// Commit transaksi jika semua operasi berhasil
 	return tx.Commit().Error
@@ -56,6 +56,7 @@ func (pr *pricingRepository) CreatePricing(pricing *model.Pricing, itemList []*m
 func (pr *pricingRepository) GetAllPricing() ([]*model.Pricing, error) {
 	var pricings []*model.Pricing
 	if err := pr.db.Preload("ItemList").Find(&pricings).Error; err != nil {
+		// if err := pr.db.Find(&pricings).Error; err != nil {
 		return nil, err
 	}
 	return pricings, nil
