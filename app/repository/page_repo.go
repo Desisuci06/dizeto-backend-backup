@@ -25,7 +25,9 @@ func (lr *landingRepository) GetLandingPage() ([]*model.Page, error) {
 		Preload("Clients").
 		Preload("Countings").
 		Preload("Highlights").
-		Preload("Pricings").
+		Preload("Pricings", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("ItemList")
+		}).
 		Preload("Testimonis").
 		Find(&pages).Error; err != nil {
 		return nil, err

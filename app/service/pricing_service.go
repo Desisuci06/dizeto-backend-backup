@@ -1,6 +1,7 @@
 package service
 
 import (
+	model_item_list "dizeto-backend/app/model/item"
 	model "dizeto-backend/app/model/pricing"
 	"dizeto-backend/app/model/pricing/dto"
 
@@ -10,9 +11,9 @@ import (
 )
 
 type PricingService interface {
-	CreatePricing(title, paket, category, item_list string, price uint) error
+	CreatePricing(pricingID uuid.UUID, title, paket, category string, itemList []*model_item_list.ItemList, price uint) error
 	GetAllPricing() (*dto.ResponsePricingsDTO, error)
-	UpdatePricing(id, title, paket, category, item_list string, price uint) error
+	UpdatePricing(id string, itemList []*model_item_list.ItemList, pricingDTO *dto.PricingDTO) error
 }
 
 type pricingService struct {
@@ -23,9 +24,8 @@ func NewPricingService(pricingRepo repository.PricingRepository) PricingService 
 	return &pricingService{pricingRepo: pricingRepo}
 }
 
-func (ps *pricingService) CreatePricing(title, paket, category, item_list string, price uint) error {
+func (ps *pricingService) CreatePricing(pricingID uuid.UUID, title, paket, category string, itemList []*model_item_list.ItemList, price uint) error {
 	// Generate UUID for pricing ID
-	pricingID := uuid.New()
 
 	// Create new pricing
 	newPricing := &model.Pricing{
@@ -34,19 +34,18 @@ func (ps *pricingService) CreatePricing(title, paket, category, item_list string
 		Price:    price,
 		Paket:    paket,
 		Category: category,
-		ItemList: item_list,
+		ItemList: itemList,
 		PageID:   1,
 	}
 
 	// Save new pricing to repository
-	err := ps.pricingRepo.CreatePricing(newPricing)
+	err := ps.pricingRepo.CreatePricing(newPricing, itemList)
 	if err != nil {
 		return err
 	}
 
 	return nil
 }
-
 func (ps *pricingService) GetAllPricing() (*dto.ResponsePricingsDTO, error) {
 	pricings, err := ps.pricingRepo.GetAllPricing()
 	if err != nil {
@@ -72,19 +71,27 @@ func (ps *pricingService) GetAllPricing() (*dto.ResponsePricingsDTO, error) {
 	return responseDTO, nil
 }
 
-func (ps *pricingService) UpdatePricing(id, title, paket, category, item_list string, price uint) error {
+func (ps *pricingService) UpdatePricing(id string, itemList []*model_item_list.ItemList, pricingDTO *dto.PricingDTO) error {
 	pricing, err := ps.pricingRepo.GetPricingByID(id)
 	if err != nil {
 		return err
 	}
 
-	pricing.Title = title
-	pricing.Price = price
-	pricing.Paket = paket
-	pricing.Category = category
-	pricing.ItemList = item_list
+	// Update pricing fields
+	pricing.Title = pricingDTO.Title
+	pricing.Price = pricingDTO.Price
+	pricing.Paket = pricingDTO.Paket
+	pricing.Category = pricingDTO.Category
+	pricing.ItemList = itemList
 
-	if err := ps.pricingRepo.UpdatePricing(pricing); err != nil {
+	// Validate pricing entity
+	if err := pricing.Validate(); err != nil {
+		return err
+	}
+
+	// Update pricing in repository
+	err = ps.pricingRepo.UpdatePricing(pricing)
+	if err != nil {
 		return err
 	}
 

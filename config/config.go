@@ -5,6 +5,7 @@ import (
 	model_client "dizeto-backend/app/model/client"
 	model_counting "dizeto-backend/app/model/counting"
 	model_highlight "dizeto-backend/app/model/highlight_porto"
+	model_item "dizeto-backend/app/model/item"
 	model_page "dizeto-backend/app/model/page"
 	model_pricing "dizeto-backend/app/model/pricing"
 	model_testimoni "dizeto-backend/app/model/testimoni"
@@ -40,6 +41,7 @@ func InitDB() (*gorm.DB, error) {
 		&model_counting.Counting{},
 		&model_client.Client{},
 		&model_page.Page{},
+		&model_item.ItemList{},
 	).Error
 
 	if err != nil {
