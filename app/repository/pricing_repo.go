@@ -55,7 +55,11 @@ func (pr *pricingRepository) CreatePricing(pricing *model.Pricing, itemList []*m
 
 func (pr *pricingRepository) GetAllPricing() ([]*model.Pricing, error) {
 	var pricings []*model.Pricing
-	if err := pr.db.Preload("ItemList").Find(&pricings).Error; err != nil {
+	if err := pr.db.
+		Joins("JOIN titles ON pricings.title = titles.kd_title").
+		Select("pricings.*, titles.nm_title as Title").
+		Preload("ItemList").
+		Find(&pricings).Error; err != nil {
 		// if err := pr.db.Find(&pricings).Error; err != nil {
 		return nil, err
 	}

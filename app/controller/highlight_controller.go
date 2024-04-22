@@ -24,7 +24,7 @@ func (hc *HighlightController) CreateHighlight(c *gin.Context) {
 		return
 	}
 
-	if err := hc.highlightService.CreateHighlight(highlightDTO.Title, highlightDTO.Image); err != nil {
+	if err := hc.highlightService.CreateHighlight("PORT", highlightDTO.Image); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -62,7 +62,7 @@ func (hc *HighlightController) UpdateHighlight(c *gin.Context) {
 		return
 	}
 
-	if err := hc.highlightService.UpdateHighlight(id, highlightDTO.Title, highlightDTO.Image); err != nil {
+	if err := hc.highlightService.UpdateHighlight(id, "PORT", highlightDTO.Image); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

@@ -18,10 +18,14 @@ type HighlightService interface {
 
 type highlightService struct {
 	highlightRepo repository.HighlightRepository
+	titleRepo     repository.TitleRepository
 }
 
-func NewHighlightService(highlightRepo repository.HighlightRepository) HighlightService {
-	return &highlightService{highlightRepo: highlightRepo}
+func NewHighlightService(highlightRepo repository.HighlightRepository, titleRepo repository.TitleRepository) HighlightService {
+	return &highlightService{
+		highlightRepo: highlightRepo,
+		titleRepo:     titleRepo,
+	}
 }
 
 func (hs *highlightService) CreateHighlight(title, image string) error {
@@ -53,9 +57,13 @@ func (hs *highlightService) GetAllHighlight() (*dto.ResponseHighlightsDTO, error
 
 	var highlightDTOs []*dto.ResponseDTO
 	for _, p := range highlights {
+		title, err := hs.titleRepo.GetTitleByKdTitle(p.Title)
+		if err != nil {
+			return nil, err
+		}
 		highlightDTO := &dto.ResponseDTO{
 			ID:    p.ID,
-			Title: p.Title,
+			Title: title.NmTitle,
 			Image: p.Image,
 		}
 		highlightDTOs = append(highlightDTOs, highlightDTO)

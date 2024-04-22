@@ -42,7 +42,7 @@ func (pc *PricingController) CreatePricing(c *gin.Context) {
 	}
 
 	// Call service method to create pricing
-	if err := pc.pricingService.CreatePricing(pricingID, pricingDTO.Title, pricingDTO.Paket, pricingDTO.Category, itemList, pricingDTO.Price); err != nil {
+	if err := pc.pricingService.CreatePricing(pricingID, "PRIC", pricingDTO.Paket, pricingDTO.Category, itemList, pricingDTO.Price); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

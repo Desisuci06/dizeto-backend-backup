@@ -24,7 +24,7 @@ func (ac *AboutController) CreateAbout(c *gin.Context) {
 		return
 	}
 
-	if err := ac.aboutService.CreateAbout(aboutDTO.Title, aboutDTO.Subtitle, aboutDTO.Description, aboutDTO.Note, aboutDTO.Image); err != nil {
+	if err := ac.aboutService.CreateAbout("ABT", aboutDTO.Subtitle, aboutDTO.Description, aboutDTO.Note, aboutDTO.Image); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -51,7 +51,7 @@ func (ac *AboutController) UpdateAbout(c *gin.Context) {
 		return
 	}
 
-	if err := ac.aboutService.UpdateAbout(id, aboutDTO.Title, aboutDTO.Subtitle, aboutDTO.Description, aboutDTO.Note, aboutDTO.Image); err != nil {
+	if err := ac.aboutService.UpdateAbout(id, "ABT", aboutDTO.Subtitle, aboutDTO.Description, aboutDTO.Note, aboutDTO.Image); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

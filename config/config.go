@@ -9,6 +9,7 @@ import (
 	model_page "dizeto-backend/app/model/page"
 	model_pricing "dizeto-backend/app/model/pricing"
 	model_testimoni "dizeto-backend/app/model/testimoni"
+	model_title "dizeto-backend/app/model/title"
 	model_user "dizeto-backend/app/model/user"
 	"dizeto-backend/utils"
 	"fmt"
@@ -42,6 +43,7 @@ func InitDB() (*gorm.DB, error) {
 		&model_client.Client{},
 		&model_page.Page{},
 		&model_item.ItemList{},
+		&model_title.Title{},
 	).Error
 
 	if err != nil {
@@ -59,12 +61,23 @@ func InitDB() (*gorm.DB, error) {
 		}
 	}
 
-	// database user seeding
+	// database page seeding
 	var page = []model_page.Page{}
 	db.Where("id = ?", 1).Find(&page)
 	fmt.Println(len(page))
 	if len(page) == 0 {
 		err = SeedPage(db)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	// database title seeding
+	var title = []model_title.Title{}
+	db.Where("id = ?", 1).Find(&title)
+	fmt.Println(len(title))
+	if len(title) == 0 {
+		err = SeedTitle(db)
 		if err != nil {
 			return nil, err
 		}
@@ -94,5 +107,21 @@ func SeedPage(db *gorm.DB) error {
 
 	page := model_page.Page{ID: uint(pageID), Title: "Page 1"}
 	db.Create(&page)
+	return nil
+}
+
+func SeedTitle(db *gorm.DB) error {
+	about := model_title.Title{ID: 1, KdTitle: "ABT", NmTitle: "ABOUT"}
+	portofolio := model_title.Title{ID: 2, KdTitle: "PORT", NmTitle: "PORTOFOLIO"}
+	pricing := model_title.Title{ID: 3, KdTitle: "PRIC", NmTitle: "PRICING"}
+	testimoni := model_title.Title{ID: 4, KdTitle: "TEST", NmTitle: "TESTIMONI"}
+	counting := model_title.Title{ID: 5, KdTitle: "COUN", NmTitle: "COUNTING"}
+	client := model_title.Title{ID: 6, KdTitle: "CLIE", NmTitle: "CLIENT"}
+	db.Create(&about)
+	db.Create(&portofolio)
+	db.Create(&pricing)
+	db.Create(&testimoni)
+	db.Create(&counting)
+	db.Create(&client)
 	return nil
 }

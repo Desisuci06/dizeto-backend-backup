@@ -18,10 +18,14 @@ type PricingService interface {
 
 type pricingService struct {
 	pricingRepo repository.PricingRepository
+	titleRepo   repository.TitleRepository
 }
 
-func NewPricingService(pricingRepo repository.PricingRepository) PricingService {
-	return &pricingService{pricingRepo: pricingRepo}
+func NewPricingService(pricingRepo repository.PricingRepository, titleRepo repository.TitleRepository) PricingService {
+	return &pricingService{
+		pricingRepo: pricingRepo,
+		titleRepo:   titleRepo,
+	}
 }
 
 func (ps *pricingService) CreatePricing(pricingID uuid.UUID, title, paket, category string, itemList []*model_item_list.ItemList, price uint) error {
@@ -54,9 +58,13 @@ func (ps *pricingService) GetAllPricing() (*dto.ResponsePricingsDTO, error) {
 
 	var pricingDTOs []*dto.ResponseDTO
 	for _, p := range pricings {
+		title, err := ps.titleRepo.GetTitleByKdTitle(p.Title)
+		if err != nil {
+			return nil, err
+		}
 		pricingDTO := &dto.ResponseDTO{
 			ID:       p.ID,
-			Title:    p.Title,
+			Title:    title.NmTitle,
 			Price:    p.Price,
 			Paket:    p.Paket,
 			Category: p.Category,
@@ -78,7 +86,7 @@ func (ps *pricingService) UpdatePricing(id string, itemList []*model_item_list.I
 	}
 
 	// Update pricing fields
-	pricing.Title = pricingDTO.Title
+	pricing.Title = "PRIC"
 	pricing.Price = pricingDTO.Price
 	pricing.Paket = pricingDTO.Paket
 	pricing.Category = pricingDTO.Category

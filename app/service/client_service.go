@@ -18,10 +18,14 @@ type ClientService interface {
 
 type clienttService struct {
 	clienttRepo repository.ClientRepository
+	titleRepo   repository.TitleRepository
 }
 
-func NewClientService(clienttRepo repository.ClientRepository) ClientService {
-	return &clienttService{clienttRepo: clienttRepo}
+func NewClientService(clienttRepo repository.ClientRepository, titleRepo repository.TitleRepository) ClientService {
+	return &clienttService{
+		clienttRepo: clienttRepo,
+		titleRepo:   titleRepo,
+	}
 }
 
 func (hs *clienttService) CreateClient(title, image string) error {
@@ -53,9 +57,13 @@ func (hs *clienttService) GetAllClient() (*dto.ResponseClientsDTO, error) {
 
 	var clienttDTOs []*dto.ResponseDTO
 	for _, p := range clientts {
+		title, err := hs.titleRepo.GetTitleByKdTitle(p.Title)
+		if err != nil {
+			return nil, err
+		}
 		clienttDTO := &dto.ResponseDTO{
 			ID:    p.ID,
-			Title: p.Title,
+			Title: title.NmTitle,
 			Image: p.Image,
 		}
 		clienttDTOs = append(clienttDTOs, clienttDTO)

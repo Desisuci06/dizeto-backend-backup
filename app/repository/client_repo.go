@@ -34,7 +34,11 @@ func (cr *clientRepository) CreateClient(client *model.Client) error {
 
 func (cr *clientRepository) GetAllClient() ([]*model.Client, error) {
 	var client []*model.Client
-	err := cr.db.Find(&client).Error
+	err := cr.db.
+		Joins("JOIN titles ON clients.title = titles.kd_title").
+		Select("clients.*, titles.nm_title as Title").
+		Find(&client).Error
+
 	return client, err
 }
 

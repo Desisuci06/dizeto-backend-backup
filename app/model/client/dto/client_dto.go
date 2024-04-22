@@ -3,7 +3,7 @@ package dto
 import "github.com/google/uuid"
 
 type ClientDTO struct {
-	Title string `json:"title" binding:"required"`
+	// Title string `json:"title" binding:"required"`
 	Image string `json:"image" binding:"required"`
 }
 

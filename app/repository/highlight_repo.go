@@ -34,7 +34,10 @@ func (hr *highlightRepository) CreateHighlight(highlight *model.HighlightPortofo
 
 func (hr *highlightRepository) GetAllHighlight() ([]*model.HighlightPortofolio, error) {
 	var highlights []*model.HighlightPortofolio
-	err := hr.db.Find(&highlights).Error
+	err := hr.db.
+		Joins("JOIN titles ON highlight_portofolios.title = titles.kd_title").
+		Select("highlight_portofolios.*, titles.nm_title as Title").
+		Find(&highlights).Error
 	return highlights, err
 }
 

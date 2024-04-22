@@ -20,16 +20,18 @@ func SetupRouter(r *gin.Engine, db *gorm.DB) {
 	countingRepo := repository.NewCountingRepository(db)
 	clientRepo := repository.NewClientRepository(db)
 	pageRepo := repository.NewLandingRepository(db)
+	titleRepo := repository.NewTitleRepository(db)
 
 	// Initialize service
 	userService := service.NewUserService(userRepo)
-	aboutService := service.NewAboutService(aboutRepo)
-	highlightService := service.NewHighlightService(highlightRepo)
-	pricingService := service.NewPricingService(pricingRepo)
+	aboutService := service.NewAboutService(aboutRepo, titleRepo)
+	highlightService := service.NewHighlightService(highlightRepo, titleRepo)
+	pricingService := service.NewPricingService(pricingRepo, titleRepo)
 	testimoniService := service.NewTestimoniService(testimoniRepo)
 	countingService := service.NewCountingService(countingRepo)
-	clientService := service.NewClientService(clientRepo)
+	clientService := service.NewClientService(clientRepo, titleRepo)
 	pageService := service.NewLandingService(pageRepo)
+	titleService := service.NewTitleService(titleRepo)
 
 	// Initialize controller
 	userController := controller.NewUserController(userService)
@@ -40,6 +42,7 @@ func SetupRouter(r *gin.Engine, db *gorm.DB) {
 	countingController := controller.NewCountingController(countingService)
 	clientController := controller.NewClientController(clientService)
 	pageController := controller.NewLandingController(pageService)
+	titleController := controller.NewTitleController(titleService)
 
 	// Routes
 	v1 := r.Group("/api/v1")
@@ -78,6 +81,11 @@ func SetupRouter(r *gin.Engine, db *gorm.DB) {
 		v1.POST("/client", middleware.AuthorizationMiddleware(), clientController.CreateClient)
 		v1.GET("/client", clientController.GetAllClient)
 		v1.PUT("/client/:id", middleware.AuthorizationMiddleware(), clientController.UpdateClient)
+
+		//title
+		v1.POST("/title", middleware.AuthorizationMiddleware(), titleController.CreateTitle)
+		v1.GET("/title", titleController.GetAllTitle)
+		v1.PUT("/title/:id", middleware.AuthorizationMiddleware(), titleController.UpdateTitle)
 
 		//landing page
 		v1.GET("/landing-page", pageController.GetLandingPage)

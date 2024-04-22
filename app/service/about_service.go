@@ -17,10 +17,14 @@ type AboutService interface {
 
 type aboutService struct {
 	aboutRepo repository.AboutRepository
+	titleRepo repository.TitleRepository
 }
 
-func NewAboutService(aboutRepo repository.AboutRepository) AboutService {
-	return &aboutService{aboutRepo: aboutRepo}
+func NewAboutService(aboutRepo repository.AboutRepository, titleRepo repository.TitleRepository) AboutService {
+	return &aboutService{
+		aboutRepo: aboutRepo,
+		titleRepo: titleRepo,
+	}
 }
 
 func (as *aboutService) CreateAbout(title, subtitle, description, note, image string) error {
@@ -55,9 +59,13 @@ func (as *aboutService) GetAllAbout() (*dto.ResponseAboutsDTO, error) {
 
 	var aboutDTOs []*dto.ResponseDTO
 	for _, p := range abouts {
+		title, err := as.titleRepo.GetTitleByKdTitle(p.Title)
+		if err != nil {
+			return nil, err
+		}
 		aboutDTO := &dto.ResponseDTO{
 			ID:          p.ID,
-			Title:       p.Title,
+			Title:       title.NmTitle, // Mengambil nm_title dari title yang berelasi
 			Subtitle:    p.Subtitle,
 			Description: p.Description,
 			Note:        p.Note,

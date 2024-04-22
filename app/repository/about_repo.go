@@ -33,9 +33,12 @@ func (ar *aboutRepository) CreateAbout(about *model.About) error {
 }
 
 func (ar *aboutRepository) GetAllAbout() ([]*model.About, error) {
-	var about []*model.About
-	err := ar.db.Find(&about).Error
-	return about, err
+	var aboutList []*model.About
+	err := ar.db.
+		Joins("JOIN titles ON abouts.title = titles.kd_title").
+		Select("abouts.*, titles.nm_title as Title").
+		Find(&aboutList).Error
+	return aboutList, err
 }
 
 func (ar *aboutRepository) GetAboutByID(id string) (*model.About, error) {
