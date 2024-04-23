@@ -85,5 +85,5 @@ func (pc *PricingController) UpdatePricing(c *gin.Context) {
 	}
 
 	// Respond with success message
-	utils.SuccessMessage(c, http.StatusOK, "Successfully updated pricing")
+	utils.SuccessMessage(c, http.StatusOK, "Successfully update pricing")
 }
