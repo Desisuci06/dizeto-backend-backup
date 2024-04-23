@@ -1,9 +1,11 @@
 package dto
 
+import "github.com/google/uuid"
+
 type ItemDTO struct {
-	ID        int    `json:"id" binding:"required"`
-	Qty       int    `json:"qty" binding:"required"`
-	Item_name string `json:"item_name" binding:"required"`
+	ID        uuid.UUID `json:"id" binding:"required"`
+	Qty       int       `json:"qty" binding:"required"`
+	Item_name string    `json:"item_name" binding:"required"`
 }
 
 // type ResponseDTO struct {

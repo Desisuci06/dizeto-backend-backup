@@ -32,8 +32,9 @@ func (pc *PricingController) CreatePricing(c *gin.Context) {
 	// Create itemList from DTO
 	var itemList []*model_item_list.ItemList
 	for _, item := range pricingDTO.ItemList {
+		itemID := uuid.New()
 		newItem := &model_item_list.ItemList{
-			ID:        item.ID,
+			ID:        itemID,
 			Qty:       item.Qty,
 			Item_name: item.Item_name,
 			PricingID: pricingID,

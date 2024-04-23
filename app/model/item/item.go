@@ -8,7 +8,7 @@ import (
 )
 
 type ItemList struct {
-	ID        int       `gorm:"primary_key" json:"id"`
+	ID        uuid.UUID `gorm:"primary_key" json:"id"`
 	Qty       int       `gorm:"not null" json:"qty"`
 	Item_name string    `gorm:"not null" json:"item_name"`
 	PricingID uuid.UUID `gorm:"not null" json:"pricing_id"`

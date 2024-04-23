@@ -29,8 +29,6 @@ func NewPricingService(pricingRepo repository.PricingRepository, titleRepo repos
 }
 
 func (ps *pricingService) CreatePricing(pricingID uuid.UUID, title, paket, category string, itemList []*model_item_list.ItemList, price uint) error {
-	// Generate UUID for pricing ID
-
 	// Create new pricing
 	newPricing := &model.Pricing{
 		ID:       pricingID,
@@ -50,6 +48,7 @@ func (ps *pricingService) CreatePricing(pricingID uuid.UUID, title, paket, categ
 
 	return nil
 }
+
 func (ps *pricingService) GetAllPricing() (*dto.ResponsePricingsDTO, error) {
 	pricings, err := ps.pricingRepo.GetAllPricing()
 	if err != nil {
