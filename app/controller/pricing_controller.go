@@ -67,15 +67,26 @@ func (pc *PricingController) UpdatePricing(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	// Create itemList from DTO
 	var itemList []*model_item_list.ItemList
 	for _, item := range pricingDTO.ItemList {
-		newItem := &model_item_list.ItemList{
-			ID:        item.ID,
-			Qty:       item.Qty,
-			Item_name: item.Item_name,
+		// If ID is not provided, treat it as a new item
+		if item.ID == uuid.Nil {
+			newItem := &model_item_list.ItemList{
+				Qty:       item.Qty,
+				Item_name: item.Item_name,
+			}
+			itemList = append(itemList, newItem)
+		} else {
+			// If ID is provided, treat it as an existing item
+			newItem := &model_item_list.ItemList{
+				ID:        item.ID,
+				Qty:       item.Qty,
+				Item_name: item.Item_name,
+			}
+			itemList = append(itemList, newItem)
 		}
-		itemList = append(itemList, newItem)
 	}
 
 	err := pc.pricingService.UpdatePricing(id, itemList, &pricingDTO)

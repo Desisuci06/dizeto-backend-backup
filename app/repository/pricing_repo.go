@@ -73,11 +73,25 @@ func (pr *pricingRepository) GetPricingByID(id string) (*model.Pricing, error) {
 }
 
 func (pr *pricingRepository) UpdatePricing(pricing *model.Pricing) error {
+	// Begin transaction
+	tx := pr.db.Begin()
 
-	if err := pricing.Validate(); err != nil {
+	// Update pricing
+	if err := tx.Save(pricing).Error; err != nil {
+		tx.Rollback()
 		return err
 	}
 
-	err := pr.db.Save(pricing).Error
-	return err
+	// Update item list
+	for _, item := range pricing.ItemList {
+		if err := tx.Save(item).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	// Commit transaction
+	tx.Commit()
+
+	return nil
 }

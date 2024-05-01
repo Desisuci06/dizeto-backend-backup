@@ -79,6 +79,7 @@ func (ps *pricingService) GetAllPricing() (*dto.ResponsePricingsDTO, error) {
 }
 
 func (ps *pricingService) UpdatePricing(id string, itemList []*model_item_list.ItemList, pricingDTO *dto.PricingDTO) error {
+	// Retrieve pricing by ID
 	pricing, err := ps.pricingRepo.GetPricingByID(id)
 	if err != nil {
 		return err
@@ -89,7 +90,17 @@ func (ps *pricingService) UpdatePricing(id string, itemList []*model_item_list.I
 	pricing.Price = pricingDTO.Price
 	pricing.Paket = pricingDTO.Paket
 	pricing.Category = pricingDTO.Category
-	pricing.ItemList = itemList
+
+	// Update item list if provided
+	if len(itemList) > 0 {
+		for _, item := range itemList {
+			// Generate UUID for item ID if it's empty
+			if item.ID == uuid.Nil {
+				item.ID = uuid.New()
+			}
+		}
+		pricing.ItemList = itemList
+	}
 
 	// Validate pricing entity
 	if err := pricing.Validate(); err != nil {
