@@ -43,11 +43,19 @@ func (uc *UserController) Login(c *gin.Context) {
 	}
 
 	// Call service to authenticate user
-	token, err := uc.userService.Login(req.Username, req.Password)
+	user, token, err := uc.userService.Login(req.Username, req.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token})
+	c.JSON(http.StatusOK, gin.H{
+		// id, username, first_name, last_name, email, role
+		"Id":       user.ID,
+		"Username": user.FirstName,
+		"Lastname": user.LastName,
+		"email":    user.Email,
+		"role":     user.Role,
+		"token":    token,
+	})
 }

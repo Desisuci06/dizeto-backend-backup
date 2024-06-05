@@ -11,7 +11,7 @@ import (
 
 type UserService interface {
 	Register(username, password, first_name, last_name, email string) error
-	Login(username, password string) (string, error)
+	Login(username, password string) (*model.User, string, error)
 	IsUsernameOrEmailExists(username, email string) bool
 }
 
@@ -58,24 +58,24 @@ func (us *userService) Register(username, password, first_name, last_name, email
 	return nil
 }
 
-func (us *userService) Login(username, password string) (string, error) {
+func (us *userService) Login(username, password string) (*model.User, string, error) {
 	// Retrieve user by username
 	user, err := us.userRepo.GetUserByUsername(username)
 	if err != nil {
-		return "", err
+		return nil, "", err
 	}
 
 	// Check password
 	if !utils.CheckPasswordHash(password, user.Password) {
-		return "", utils.ErrInvalidCredentials
+		return nil, "", utils.ErrInvalidCredentials
 	}
 
 	// Generate JWT token
 	token, err := utils.GenerateJWT(username, password, user.Role)
 	if err != nil {
-		return "", err
+		return nil, "", err
 	}
-	return token, nil
+	return user, token, nil
 }
 
 func (us *userService) IsUsernameOrEmailExists(username, email string) bool {

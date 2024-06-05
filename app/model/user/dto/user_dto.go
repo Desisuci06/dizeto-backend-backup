@@ -8,6 +8,15 @@ type UserRegisterRequest struct {
 	Email     string `json:"email" binding:"required"`
 }
 
+type LoginResponse struct {
+	ID        string `json:"id"`
+	Username  string `json:"username"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+	Role      string `json:"role"`
+}
+
 type UserLoginRequest struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
