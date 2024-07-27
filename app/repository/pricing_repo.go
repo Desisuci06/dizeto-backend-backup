@@ -66,11 +66,11 @@ func (pr *pricingRepository) GetAllPricing() ([]*model.Pricing, error) {
 	return pricings, nil
 }
 
-func (pr *pricingRepository) GetPricingByID(id string) (*model.Pricing, error) {
-	var pricing model.Pricing
-	err := pr.db.Where("id = ?", id).First(&pricing).Error
-	return &pricing, err
-}
+// func (pr *pricingRepository) GetPricingByID(id string) (*model.Pricing, error) {
+// 	var pricing model.Pricing
+// 	err := pr.db.Where("id = ?", id).First(&pricing).Error
+// 	return &pricing, err
+// }
 
 func (pr *pricingRepository) UpdatePricing(pricing *model.Pricing) error {
 	// Begin transaction
@@ -78,6 +78,12 @@ func (pr *pricingRepository) UpdatePricing(pricing *model.Pricing) error {
 
 	// Update pricing
 	if err := tx.Save(pricing).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Delete existing item list
+	if err := tx.Where("pricing_id = ?", pricing.ID).Delete(&model_item_list.ItemList{}).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -94,4 +100,12 @@ func (pr *pricingRepository) UpdatePricing(pricing *model.Pricing) error {
 	tx.Commit()
 
 	return nil
+}
+
+func (pr *pricingRepository) GetPricingByID(id string) (*model.Pricing, error) {
+	var pricing model.Pricing
+	if err := pr.db.Preload("ItemList").First(&pricing, "id = ?", id).Error; err != nil {
+		return nil, err
+	}
+	return &pricing, nil
 }

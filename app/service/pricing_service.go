@@ -4,6 +4,7 @@ import (
 	model_item_list "dizeto-backend/app/model/item"
 	model "dizeto-backend/app/model/pricing"
 	"dizeto-backend/app/model/pricing/dto"
+	"fmt"
 
 	"dizeto-backend/app/repository"
 
@@ -86,21 +87,28 @@ func (ps *pricingService) UpdatePricing(id string, itemList []*model_item_list.I
 	}
 
 	// Update pricing fields
-	pricing.Title = "PRIC"
 	pricing.Price = pricingDTO.Price
 	pricing.Paket = pricingDTO.Paket
 	pricing.Category = pricingDTO.Category
 
-	// Update item list if provided
-	if len(itemList) > 0 {
-		for _, item := range itemList {
-			// Generate UUID for item ID if it's empty
-			if item.ID == uuid.Nil {
-				item.ID = uuid.New()
+	// Validate and update item list
+	updatedItems := make([]*model_item_list.ItemList, 0)
+	for _, newItem := range itemList {
+		found := false
+		for _, existingItem := range pricing.ItemList {
+			if newItem.ID == existingItem.ID {
+				found = true
+				updatedItems = append(updatedItems, newItem)
+				break
 			}
 		}
-		pricing.ItemList = itemList
+		if !found {
+			return fmt.Errorf("item with ID %s not found", newItem.ID)
+		}
 	}
+
+	// Replace the existing item list with the updated list
+	pricing.ItemList = updatedItems
 
 	// Validate pricing entity
 	if err := pricing.Validate(); err != nil {

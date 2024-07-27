@@ -8,7 +8,6 @@ import (
 )
 
 type PricingDTO struct {
-	// Title    string                   `json:"title" binding:"required"`
 	Price    uint                     `json:"price" binding:"required"`
 	Paket    string                   `json:"paket" binding:"required"`
 	Category string                   `json:"category" binding:"required"`
