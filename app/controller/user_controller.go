@@ -26,7 +26,7 @@ func (uc *UserController) Register(c *gin.Context) {
 	}
 
 	// Call service to register user
-	err := uc.userService.Register(req.Username, req.Password, req.FirstName, req.LastName, req.Email)
+	err := uc.userService.Register(req.Username, req.Password, req.Email, req.Name, req.Image)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -51,11 +51,11 @@ func (uc *UserController) Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		// id, username, first_name, last_name, email, role
-		"Id":       user.ID,
-		"Username": user.FirstName,
-		"Lastname": user.LastName,
-		"email":    user.Email,
-		"role":     user.Role,
-		"token":    token,
+		"Id":    user.ID,
+		"Name":  user.Name,
+		"Image": user.Image,
+		"email": user.Email,
+		"role":  user.Role,
+		"token": token,
 	})
 }

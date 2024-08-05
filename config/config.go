@@ -96,7 +96,13 @@ func SeedUsers(db *gorm.DB) error {
 	if err != nil {
 		return err
 	}
-	userAdmin := model_user.User{ID: userID, Username: "admin", Password: hashedPassword, FirstName: "Admin", LastName: "Dizeto", Email: "admin@gmail.com", Role: "admin"}
+	userAdmin := model_user.User{
+		ID:       userID,
+		Name:     "admin",
+		Username: "admin",
+		Password: hashedPassword,
+		Email:    "admin@gmail.com",
+		Role:     "admin"}
 	db.Create(&userAdmin)
 
 	return nil

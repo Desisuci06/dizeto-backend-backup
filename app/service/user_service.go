@@ -10,7 +10,7 @@ import (
 )
 
 type UserService interface {
-	Register(username, password, first_name, last_name, email string) error
+	Register(username, password, email, name, image string) error
 	Login(username, password string) (*model.User, string, error)
 	IsUsernameOrEmailExists(username, email string) bool
 }
@@ -23,7 +23,7 @@ func NewUserService(userRepo repository.UserRepository) UserService {
 	return &userService{userRepo}
 }
 
-func (us *userService) Register(username, password, first_name, last_name, email string) error {
+func (us *userService) Register(username, password, email, name, image string) error {
 	// Generate UUID for user ID
 	userID, err := uuid.NewRandom()
 	if err != nil {
@@ -42,13 +42,13 @@ func (us *userService) Register(username, password, first_name, last_name, email
 
 	// Create new user
 	newUser := &model.User{
-		ID:        userID,
-		Username:  username,
-		Password:  hashedPassword,
-		FirstName: first_name,
-		LastName:  last_name,
-		Email:     email,
-		Role:      "customer",
+		ID:       userID,
+		Name:     name,
+		Image:    image,
+		Username: username,
+		Password: hashedPassword,
+		Email:    email,
+		Role:     "customer",
 	}
 	err = us.userRepo.CreateUser(newUser)
 	if err != nil {
