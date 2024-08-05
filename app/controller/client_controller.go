@@ -24,7 +24,7 @@ func (hc *ClientController) CreateClient(c *gin.Context) {
 		return
 	}
 
-	if err := hc.clientService.CreateClient("CLIE", clientDTO.Image); err != nil {
+	if err := hc.clientService.CreateClient("CLIE", clientDTO.LogoURL, clientDTO.Theme, clientDTO.Href, clientDTO.Alt); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -62,7 +62,7 @@ func (hc *ClientController) UpdateClient(c *gin.Context) {
 		return
 	}
 
-	if err := hc.clientService.UpdateClient(id, "CLIE", clientDTO.Image); err != nil {
+	if err := hc.clientService.UpdateClient(id, "CLIE", clientDTO.LogoURL, clientDTO.Theme, clientDTO.Href, clientDTO.Alt); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}

@@ -10,9 +10,9 @@ import (
 )
 
 type ClientService interface {
-	CreateClient(title, image string) error
+	CreateClient(title, logoURL, theme, href, alt string) error
 	GetAllClient() (*dto.ResponseClientsDTO, error)
-	UpdateClient(id, title, image string) error
+	UpdateClient(id, title, logoURL, theme, href, alt string) error
 	GetClientByID(id string) (*model.Client, error)
 }
 
@@ -28,16 +28,19 @@ func NewClientService(clienttRepo repository.ClientRepository, titleRepo reposit
 	}
 }
 
-func (hs *clienttService) CreateClient(title, image string) error {
+func (hs *clienttService) CreateClient(title, logoURL, theme, href, alt string) error {
 	// Generate UUID for clientt ID
 	clienttID := uuid.New()
 
 	// Create new clientt
 	newClient := &model.Client{
-		ID:     clienttID,
-		Title:  title,
-		Image:  image,
-		PageID: 1,
+		ID:      clienttID,
+		Title:   title,
+		LogoURL: logoURL,
+		Theme:   theme,
+		Href:    href,
+		Alt:     alt,
+		PageID:  1,
 	}
 
 	// Save new clientt to repository
@@ -62,9 +65,12 @@ func (hs *clienttService) GetAllClient() (*dto.ResponseClientsDTO, error) {
 			return nil, err
 		}
 		clienttDTO := &dto.ResponseDTO{
-			ID:    p.ID,
-			Title: title.NmTitle,
-			Image: p.Image,
+			ID:      p.ID,
+			Title:   title.NmTitle,
+			LogoURL: p.LogoURL,
+			Theme:   p.Theme,
+			Href:    p.Href,
+			Alt:     p.Alt,
 		}
 		clienttDTOs = append(clienttDTOs, clienttDTO)
 	}
@@ -84,14 +90,17 @@ func (hs *clienttService) GetClientByID(id string) (*model.Client, error) {
 	return clientt, nil
 }
 
-func (hs *clienttService) UpdateClient(id, title, image string) error {
+func (hs *clienttService) UpdateClient(id, title, logoURL, theme, href, alt string) error {
 	clientt, err := hs.clienttRepo.GetClientByID(id)
 	if err != nil {
 		return err
 	}
 
 	clientt.Title = title
-	clientt.Image = image
+	clientt.LogoURL = logoURL
+	clientt.Theme = theme
+	clientt.Href = href
+	clientt.Alt = alt
 
 	if err := hs.clienttRepo.UpdateClient(clientt); err != nil {
 		return err
